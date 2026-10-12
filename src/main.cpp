@@ -1,5 +1,5 @@
-﻿#include "headers.hpp"
-#include "Player.hpp"
+﻿#include "common/headers.hpp"
+#include "player/Player.hpp"
 
 int main() {
     try {
