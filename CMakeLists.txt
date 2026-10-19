@@ -25,6 +25,8 @@ add_executable(Command_Line_Player
         src/audio/minimp3_implementation.cpp
         src/third_party/minimp3/minimp3.h
         src/third_party/minimp3/minimp3_ex.h
+        src/audio/AudioBuffer.tpp
+        src/audio/AudioBuffer.hpp
 )
 
 target_link_libraries(Command_Line_Player

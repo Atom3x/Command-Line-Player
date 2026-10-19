@@ -11,7 +11,6 @@ private:
     std::vector<uint16_t> callbackBuffer;
     std::chrono::duration<double> timeElapsed = std::chrono::seconds(0), currentSongDuration = std::chrono::seconds(0);
 
-
     std::condition_variable playCv, pauseCv, stopCv, seekCv;
     std::mutex musicQueueMutex, playCvMutex, stopCvMutex, seekCvMutex, pauseMutex, timeMutex, seekMutex, callbackBufferMutex;
 
