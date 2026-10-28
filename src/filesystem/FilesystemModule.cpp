@@ -13,7 +13,7 @@ void FilesystemModule::readMusicList() {
                 continue; 
             }
 
-            MP3_Header header = recieveHeader(headerData.data());
+            MP3_Header header = receiveHeader(headerData.data());
             if (std::memcmp(header.fileID, "ID3", 3) != 0) {
                 file.close();
                 continue;
@@ -39,7 +39,7 @@ std::optional<std::wstring> FilesystemModule::recieveSongName(std::filesystem::p
 
     std::array<uint8_t, 10> headerData;
     if (!file.read(reinterpret_cast<char*>(headerData.data()), 10)) return std::nullopt;
-    MP3_Header header = recieveHeader(headerData.data());
+    MP3_Header header = receiveHeader(headerData.data());
     if (std::memcmp(header.fileID, "ID3", 3) != 0) return std::nullopt;
 
     std::vector<uint8_t> data(header.tagSize);

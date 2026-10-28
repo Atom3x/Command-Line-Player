@@ -45,22 +45,3 @@ extern "C" {
 static const std::filesystem::path appPath = std::filesystem::current_path();
 constexpr std::size_t BLOCK_SIZE = 16 * 1024;
 
-#pragma pack(push, 1)
-struct MP3_Header {
-	char fileID[3];
-	uint8_t verMajor;
-	uint8_t verMinor;
-	uint8_t flags;
-	uint32_t tagSize;
-};
-#pragma pack(pop)
-
-static MP3_Header recieveHeader(uint8_t bytes[10]) {
-	MP3_Header header;
-	std::memcpy(header.fileID, bytes, 3);
-	header.verMajor = bytes[3];
-	header.verMinor = bytes[4];
-	header.flags = bytes[5];
-	header.tagSize = ((bytes[6] & 0x7F) << 21 | (bytes[7] & 0x7F) << 14 | (bytes[8] & 0x7F) << 7 | (bytes[9] & 0x7F));
-	return header;
-}

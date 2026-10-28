@@ -1,5 +1,6 @@
 #pragma once
 #include "../common/headers.hpp"
+#include "common/MP3Tags.hpp"
 
 enum class FileType {
 	NONE,

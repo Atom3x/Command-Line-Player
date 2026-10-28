@@ -4,28 +4,39 @@
 
 #include "AudioBuffer.hpp"
 
+template<typename T>
+bool AudioBuffer<T>::push(const T *data, const size_t size) {
+    if (size == 0) return true;
+    if (size > spaceAvailable()) return false;
+
+    const size_t toEnd = buffer.size() - writeIndex;
+    const size_t first = std::min(size, toEnd);
+
+    std::copy(data, data + first, buffer.begin() + writeIndex);
+    std::copy(data + first, data, buffer.begin());
+
+    writeIndex = (writeIndex + size) % buffer.size();
+    return true;
+}
+
 template <typename T>
 bool AudioBuffer<T>::push(const std::vector<T>& data) {
-    const size_t dataSize = data.size();
-    if (dataSize == 0) return true;
+    return push(data.data(), data.size());
+}
 
-    if (dataSize > spaceAvailable()) return false;
-    if (writeIndex > readIndex) {
-        size_t memoryToTheEnd = buffer.size() - writeIndex;
-        if (dataSize > memoryToTheEnd) {
-            std::copy(data.begin(), data.begin() + memoryToTheEnd, buffer.begin() + writeIndex);
-            std::copy(data.begin() + memoryToTheEnd, data.end(), buffer.begin());
-        }
-        else {
-            std::copy(data.begin(), data.end(), buffer.begin() + writeIndex);
-        }
-    }
-    else {
-        std::copy(data.begin(), data.end(), buffer.begin() + writeIndex);
-    }
-    writeIndex = (writeIndex + dataSize) % buffer.size();
+template <typename T>
+void AudioBuffer<T>::clear() {
+    readIndex = writeIndex = 0;
+}
 
-    return true;
+template<typename T>
+bool AudioBuffer<T>::empty() const {
+    return writeIndex == readIndex;
+}
+
+template<typename T>
+AudioBuffer<T>::operator bool() const {
+    return empty();
 }
 
 template <typename T>
@@ -50,6 +61,28 @@ bool AudioBuffer<T>::pop(OutputIt destination, const size_t size) {
     }
 
     readIndex = (readIndex + size) % buffer.size();
+    return true;
+}
+
+template <typename T>
+T* AudioBuffer<T>::writeData() {
+    return buffer.data() + writeIndex;
+}
+
+template <typename T>
+size_t AudioBuffer<T>::writableSize() const {
+    if (writeIndex < readIndex) {
+        return readIndex - writeIndex - 1;
+    }
+
+    return buffer.size() - writeIndex - (readIndex == 0 ? 1 : 0);
+}
+
+template <typename T>
+bool AudioBuffer<T>::commitWrite(const size_t size) {
+    if (size > writableSize()) return false;
+
+    writeIndex = (writeIndex + size) % buffer.size();
     return true;
 }
 
